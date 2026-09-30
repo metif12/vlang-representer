@@ -62,25 +62,21 @@ Bump the two together, and expect to review the diff of
 `tests/*/expected_representation.txt` in the same pull request. Those files are the
 contract, not snapshots.
 
-### A `v fmt` bug worth knowing about
+### V has no ternary, and `v fmt` handles `if` as an expression
 
-On V master, `v fmt` mangles the ternary operator, silently producing invalid V:
+V has no ternary operator. The C-style `c ? 1 : 2` is not valid V and does not
+compile; the V way is to use `if` as an expression:
 
 ```v
-// in
-return g(y) ? h(y, 400) : k(y, 4)
-// out, exit code 0
-return g(y)?
-h(y, 400)
-k(y, 4)
+x := if c { 1 } else { 2 }
 ```
 
-The mangling is deterministic, so it does not merge distinct solutions, but the
-representation is not valid V. This is a bug in V rather than in this
-representer, and it is worth reporting upstream. It does not affect the pinned
-`0.5.2` release, which does not accept a ternary at all — hence the pin.
+`v fmt` formats that form correctly, so there is nothing to normalize here.
+Worth knowing because it is the first thing many people reach for: a solution
+written with `? :` will not parse, so it takes the weak fallback path rather than
+producing a representation.
 
-Also note that `v fmt` is not purely parser-based: it compiles a small tool to a
+Also note that `v fmt` is not purely parser-based: it compiles cmd/tools/vfmt.v to a
 native binary on first use, so the image needs a C compiler (`tcc` and
 `libc6-dev`, not `build-essential`).
 
