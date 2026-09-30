@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Tests
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      # The Docker run is the authoritative check: it uses the pinned compiler
+      # and has jq present, while bin/run-tests.sh on the host does not.
+      - name: Run Tests in Docker
+        run: bin/run-tests-in-docker.sh

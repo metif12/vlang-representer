@@ -1,0 +1,18 @@
+module main
+
+fn is_century(year int) bool {
+	return is_divisible_by(year, 100)
+}
+
+fn is_divisible_by(year int, by int) bool {
+	return year % by == 0
+}
+
+module main
+
+fn is_leap_year(year int) bool {
+	if is_century(year) {
+		return is_divisible_by(year, 400)
+	}
+	return is_divisible_by(year, 4)
+}
